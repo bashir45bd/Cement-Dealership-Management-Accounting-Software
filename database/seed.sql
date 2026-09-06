@@ -96,3 +96,5 @@ INSERT INTO `expense_categories` (`id`, `name`, `description`, `status`) VALUES
 (8, 'Maintenance & Repairs', 'Shop fixture repairs, shutter, electric work', 'active'),
 (9, 'Bank Charges & Commission', 'Bank ledger fees, transaction commissions', 'active'),
 (10, 'Miscellaneous / Other', 'General unexpected minor expenses', 'active');
+
+

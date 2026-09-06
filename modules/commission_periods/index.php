@@ -15,6 +15,9 @@
  *   - No two periods of the SAME commission_type for the SAME company
  *     may cover overlapping dates (prevents duplicate/overlapping claims
  *     for the same month(s)/year).
+ *   - A PENDING period can be edited (company/type/dates/rate/label/notes).
+ *     A RECEIVED period is frozen and can never be edited (matches the
+ *     existing rule that received rows are never recalculated).
  */
 
 define('APP_INIT', true);
@@ -102,7 +105,7 @@ foreach ($periods as $p) {
 // used purely for client-side duration/overlap validation in the modal.
 // (The authoritative check always happens server-side in save.php.)
 $allPeriodsForJsStmt = $db->query(
-    "SELECT company_id, commission_type, start_date, end_date, period_label
+    "SELECT id, company_id, commission_type, start_date, end_date, period_label
      FROM company_period_commissions"
 );
 $allPeriodsForJs = $allPeriodsForJsStmt->fetchAll(PDO::FETCH_ASSOC);
@@ -221,10 +224,25 @@ $allPeriodsForJs = $allPeriodsForJsStmt->fetchAll(PDO::FETCH_ASSOC);
                             </td>
                             <td class="text-end no-print">
                                 <?php if ($isPending): ?>
-                                    <button type="button" class="btn btn-primary-custom btn-sm"
-                                        onclick="markReceived(<?php echo $p['id']; ?>, '<?php echo htmlspecialchars($p['company_name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($p['period_label'], ENT_QUOTES); ?>', '<?php echo $p['commission_type']; ?>', '<?php echo htmlspecialchars(formatBDT($p['total_amount']), ENT_QUOTES); ?>', '<?php echo number_format($p['total_bags']); ?>')">
-                                        <i class="fa-solid fa-check me-1"></i> Mark as Received
-                                    </button>
+                                    <div class="d-flex gap-1 justify-content-end">
+                                        <button type="button" class="btn btn-secondary-custom btn-sm"
+                                            onclick='openPeriodModal(<?php echo json_encode([
+                                                "id"               => (int)$p["id"],
+                                                "company_id"       => (int)$p["company_id"],
+                                                "commission_type"  => $p["commission_type"],
+                                                "start_date"       => $p["start_date"],
+                                                "end_date"         => $p["end_date"],
+                                                "rate_per_bag"     => $p["rate_per_bag"],
+                                                "period_label"     => $p["period_label"],
+                                                "notes"            => $p["notes"],
+                                            ], JSON_HEX_APOS | JSON_HEX_QUOT); ?>)'>
+                                            <i class="fa-solid fa-pen me-1"></i> Edit
+                                        </button>
+                                        <button type="button" class="btn btn-primary-custom btn-sm"
+                                            onclick="markReceived(<?php echo $p['id']; ?>, '<?php echo htmlspecialchars($p['company_name'], ENT_QUOTES); ?>', '<?php echo htmlspecialchars($p['period_label'], ENT_QUOTES); ?>', '<?php echo $p['commission_type']; ?>', '<?php echo htmlspecialchars(formatBDT($p['total_amount']), ENT_QUOTES); ?>', '<?php echo number_format($p['total_bags']); ?>')">
+                                            <i class="fa-solid fa-check me-1"></i> Mark as Received
+                                        </button>
+                                    </div>
                                 <?php else: ?>
                                     <span class="text-muted small">Locked</span>
                                 <?php endif; ?>
@@ -237,16 +255,17 @@ $allPeriodsForJs = $allPeriodsForJsStmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 </div>
 
-<!-- New Period Commission Modal -->
+<!-- New / Edit Period Commission Modal -->
 <div class="modal fade" id="periodModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content dark-modal">
             <div class="modal-header dark-modal-header">
-                <h5 class="modal-title" style="color: var(--text-primary);">New Period Commission</h5>
+                <h5 class="modal-title" id="periodModalLabel" style="color: var(--text-primary);">New Period Commission</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="periodForm">
                 <?php echo csrfField(); ?>
+                <input type="hidden" id="pc_id" name="id" value="">
 
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -300,6 +319,8 @@ $allPeriodsForJs = $allPeriodsForJsStmt->fetchAll(PDO::FETCH_ASSOC);
                         <i class="fa-solid fa-info-circle me-1"></i> Bags sold and total amount are calculated automatically from your Sales records for this company within the selected dates, and stay updated until you mark it as received.
                         <br><br>
                         <i class="fa-solid fa-circle-exclamation me-1"></i> 3-Month commission periods cannot exceed <strong>3 months</strong>, and Yearly periods cannot exceed <strong>12 months</strong>. A company also cannot have two periods of the same type covering overlapping dates.
+                        <br><br>
+                        <i class="fa-solid fa-pen me-1"></i> Only <strong>Pending</strong> periods can be edited. Once a period is marked as Received it is locked and frozen.
                     </div>
                 </div>
 
@@ -374,12 +395,44 @@ const CSRF_TOKEN = '<?php echo getCsrfToken(); ?>';
 // (Authoritative validation always happens server-side in save.php.)
 const EXISTING_PERIODS = <?php echo json_encode($allPeriodsForJs); ?>;
 
-function openPeriodModal() {
-    document.getElementById('periodForm').reset();
+/**
+ * Opens the period modal.
+ * Call with no argument for "New Period Commission" (create mode).
+ * Call with a record object for "Edit Period Commission" (edit mode) —
+ * the record must include: id, company_id, commission_type, start_date,
+ * end_date, rate_per_bag, period_label, notes.
+ */
+function openPeriodModal(record) {
+    const form = document.getElementById('periodForm');
+    form.reset();
+
     const errBox = document.getElementById('periodFormError');
     errBox.style.display = 'none';
     errBox.textContent = '';
     document.getElementById('savePeriodBtn').disabled = false;
+
+    const titleEl = document.getElementById('periodModalLabel');
+    const saveBtn = document.getElementById('savePeriodBtn');
+
+    if (record && record.id) {
+        // Edit mode
+        document.getElementById('pc_id').value = record.id;
+        document.getElementById('pc_company_id').value = record.company_id;
+        document.getElementById('pc_type').value = record.commission_type;
+        document.getElementById('pc_start').value = record.start_date;
+        document.getElementById('pc_end').value = record.end_date;
+        document.getElementById('pc_rate').value = record.rate_per_bag;
+        document.getElementById('pc_label').value = record.period_label || '';
+        document.getElementById('pc_notes').value = record.notes || '';
+
+        titleEl.textContent = 'Edit Period Commission';
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i> Update Period Commission';
+    } else {
+        // Create mode
+        document.getElementById('pc_id').value = '';
+        titleEl.textContent = 'New Period Commission';
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk me-1"></i> Save Period Commission';
+    }
 
     if (!periodModalInstance) {
         periodModalInstance = new bootstrap.Modal(document.getElementById('periodModal'));
@@ -388,6 +441,7 @@ function openPeriodModal() {
 }
 
 function validatePeriodForm() {
+    const editingId = document.getElementById('pc_id').value;
     const companyId = document.getElementById('pc_company_id').value;
     const type = document.getElementById('pc_type').value;
     const start = document.getElementById('pc_start').value;
@@ -427,8 +481,13 @@ function validatePeriodForm() {
         return;
     }
 
-    // Overlap check: same company + same commission_type + overlapping dates
+    // Overlap check: same company + same commission_type + overlapping dates.
+    // When editing, the record being edited is excluded from this check
+    // against itself (matched by id).
     const overlap = EXISTING_PERIODS.some(p => {
+        if (editingId && String(p.id) === String(editingId)) {
+            return false;
+        }
         if (String(p.company_id) !== String(companyId) || p.commission_type !== type) {
             return false;
         }
@@ -459,6 +518,7 @@ document.getElementById('periodForm').addEventListener('submit', async function 
 
     const form = e.target;
     const formData = new FormData(form);
+    const isEditing = !!document.getElementById('pc_id').value;
     const saveBtn = document.getElementById('savePeriodBtn');
     const originalBtnHtml = saveBtn.innerHTML;
 
@@ -486,7 +546,7 @@ document.getElementById('periodForm').addEventListener('submit', async function 
             setTimeout(() => window.location.reload(), 500);
         } else {
             const errBox = document.getElementById('periodFormError');
-            errBox.textContent = result.message || 'Failed to save period commission.';
+            errBox.textContent = result.message || (isEditing ? 'Failed to update period commission.' : 'Failed to save period commission.');
             errBox.style.display = 'block';
         }
     } catch (err) {

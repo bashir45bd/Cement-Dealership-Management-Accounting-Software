@@ -1,6 +1,6 @@
 <?php
 /**
- * Maruf Traders - New Sales Invoice / POS Entry
+ * vv Maruf Traders - New Sales Invoice / POS Entry
  */
 
 define('APP_INIT', true);
@@ -120,6 +120,32 @@ $products = $pStmt->fetchAll();
                 </div>
             </div>
 
+            <!-- Additional Landed Costs -->
+            <div class="dark-card mb-4">
+                <div class="card-header-clean">
+                    <div class="card-title-clean fs-6">
+                        <i class="fa-solid fa-truck text-cyan"></i>
+                        <span>Additional Landed Costs (যোগান খরচ)</span>
+                    </div>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="transport_cost" class="form-label-custom">Transport / Truck Fare (৳)</label>
+                        <input type="number" step="0.01" class="form-control form-control-custom" id="transport_cost" name="transport_cost" value="0.00" oninput="distributeExtraCosts()">
+                        <small class="text-secondary">Total quantity দিয়ে ভাগ হয়ে প্রতি ব্যাগের rate-এ যোগ হবে</small>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="loading_cost" class="form-label-custom">Loading / Unloading Labor (৳)</label>
+                        <input type="number" step="0.01" class="form-control form-control-custom" id="loading_cost" name="loading_cost" value="0.00" oninput="distributeExtraCosts()">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="other_cost" class="form-label-custom">Other / Gate Pass (৳)</label>
+                        <input type="number" step="0.01" class="form-control form-control-custom" id="other_cost" name="other_cost" value="0.00" oninput="distributeExtraCosts()">
+                    </div>
+                </div>
+            </div>
+
             <!-- Delivery & Notes Card -->
             <div class="dark-card mb-4">
                 <div class="row g-3">
@@ -153,8 +179,18 @@ $products = $pStmt->fetchAll();
                     </div>
 
                     <div class="profit-item">
+                        <span class="text-secondary">Landed Costs (Transport+Loading+Other):</span>
+                        <span style="color: var(--text-primary);" id="disp_extra_costs">৳ 0.00</span>
+                    </div>
+
+                    <div class="profit-item">
                         <span class="text-secondary">Special Discount (৳):</span>
                         <input type="number" step="0.01" class="form-control-custom text-end py-1 px-2" id="discount" name="discount" value="0.00" style="width: 120px;" oninput="calculateInvoice()">
+                    </div>
+
+                    <div class="profit-item">
+                        <span class="text-secondary">Others (৳):</span>
+                        <input type="number" step="0.01" class="form-control-custom text-end py-1 px-2" id="others_charge" name="others_charge" value="0.00" style="width: 120px;" oninput="calculateInvoice()">
                     </div>
 
                     <div class="profit-item">
@@ -231,6 +267,7 @@ function addItemRow() {
     const tbody = document.getElementById('itemsTableBody');
     const tr = document.createElement('tr');
     tr.id = `item_row_${rowCounter}`;
+    tr.dataset.basePrice = 0;
 
     tr.innerHTML = `
         <td>
@@ -243,7 +280,7 @@ function addItemRow() {
             <span class="fw-bold stock-badge text-secondary" id="stock_${rowCounter}">—</span>
         </td>
         <td>
-            <input type="number" class="form-control form-control-custom text-end item-qty" name="items[${rowCounter}][quantity]" min="1" value="10" required oninput="calculateInvoice()">
+            <input type="number" class="form-control form-control-custom text-end item-qty" name="items[${rowCounter}][quantity]" min="1" value="10" required oninput="distributeExtraCosts()">
         </td>
         <td>
             <input type="number" step="0.01" class="form-control form-control-custom text-end item-rate" name="items[${rowCounter}][unit_price]" value="0.00" required oninput="calculateInvoice()">
@@ -263,7 +300,7 @@ function addItemRow() {
 function removeItemRow(rowId) {
     const row = document.getElementById(`item_row_${rowId}`);
     if (row) row.remove();
-    calculateInvoice();
+    distributeExtraCosts();
 }
 
 function onItemProductChange(rowId) {
@@ -271,7 +308,6 @@ function onItemProductChange(rowId) {
     const sel = row.querySelector('.prod-select');
     const opt = sel.options[sel.selectedIndex];
     const stockSpan = document.getElementById(`stock_${rowId}`);
-    const rateInput = row.querySelector('.item-rate');
 
     if (opt && opt.value) {
         const stock = parseInt(opt.dataset.stock) || 0;
@@ -279,11 +315,48 @@ function onItemProductChange(rowId) {
 
         stockSpan.innerText = stock + ' Bags';
         stockSpan.className = stock > 0 ? 'fw-bold text-success' : 'fw-bold text-danger';
-        rateInput.value = price.toFixed(2);
+        row.dataset.basePrice = price; // original sale price, landed cost per bag bade
     } else {
         stockSpan.innerText = '—';
-        rateInput.value = '0.00';
+        row.dataset.basePrice = 0;
     }
+    distributeExtraCosts();
+}
+
+/**
+ * Sums Transport + Loading/Unloading + Other landed costs, splits the total
+ * across the combined quantity of all selected lines, and folds the
+ * per-bag share into each line's rate (mirrors the Cement Receive form's
+ * "Additional Landed Costs" allocation).
+ */
+function distributeExtraCosts() {
+    const transportCost = parseFloat(document.getElementById('transport_cost').value) || 0;
+    const loadingCost = parseFloat(document.getElementById('loading_cost').value) || 0;
+    const otherCost = parseFloat(document.getElementById('other_cost').value) || 0;
+    const totalExtraCost = transportCost + loadingCost + otherCost;
+
+    const rows = document.querySelectorAll('#itemsTableBody tr');
+
+    let totalQty = 0;
+    rows.forEach(r => {
+        const sel = r.querySelector('.prod-select');
+        if (sel && sel.value) {
+            totalQty += parseFloat(r.querySelector('.item-qty')?.value) || 0;
+        }
+    });
+
+    const perUnitExtra = (totalExtraCost > 0 && totalQty > 0) ? (totalExtraCost / totalQty) : 0;
+
+    rows.forEach(r => {
+        const sel = r.querySelector('.prod-select');
+        const rateInput = r.querySelector('.item-rate');
+        if (sel && sel.value) {
+            const basePrice = parseFloat(r.dataset.basePrice) || 0;
+            rateInput.value = (basePrice + perUnitExtra).toFixed(2);
+        }
+    });
+
+    document.getElementById('disp_extra_costs').innerText = formatBDT(totalExtraCost);
     calculateInvoice();
 }
 
@@ -302,7 +375,8 @@ function calculateInvoice() {
     });
 
     const discount = parseFloat(document.getElementById('discount').value) || 0;
-    const totalAmount = Math.max(0, subtotal - discount);
+    const othersCharge = parseFloat(document.getElementById('others_charge').value) || 0;
+    const totalAmount = Math.max(0, subtotal - discount + othersCharge);
     const advanceDeducted = parseFloat(document.getElementById('advance_deducted')?.value) || 0;
     const paidAmount = parseFloat(document.getElementById('paid_amount').value) || 0;
 

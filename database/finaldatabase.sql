@@ -594,6 +594,8 @@ CREATE TABLE `other_incomes` (
   CONSTRAINT `fk_other_incomes_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+
+
 -- ============================================================
 -- OPTIONAL: register the permission for the new Period Commissions module.
 -- Super Admin already has full access regardless of this. Uncomment and

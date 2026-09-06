@@ -35,7 +35,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/dashboard/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'dashboard') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-chart-pie"></i>
-                <span class="nav-text">Dashboard</span>
+                <span class="nav-text" title="Dashboard (ড্যাশবোর্ড)">Dashboard (ড্যাশবোর্ড)</span>
             </a>
         </div>
 
@@ -46,7 +46,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/retailers/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'retailers') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-users"></i>
-                <span class="nav-text">Retailers (রিটেইলার)</span>
+                <span class="nav-text" title="Retailers (রিটেইলার)">Retailers (রিটেইলার)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -55,7 +55,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/sales/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'sales') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-file-invoice-dollar"></i>
-                <span class="nav-text">Sales (বিক্রয়)</span>
+                <span class="nav-text" title="Sales (বিক্রয়)">Sales (বিক্রয়)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -64,7 +64,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/collections/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'collections') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-hand-holding-dollar"></i>
-                <span class="nav-text">Collections (আদায়)</span>
+                <span class="nav-text" title="Collections (আদায়)">Collections (আদায়)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -73,7 +73,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/advances/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'advances') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-credit-card"></i>
-                <span class="nav-text">Advances (অগ্রিম)</span>
+                <span class="nav-text" title="Advances (অগ্রিম)">Advances (অগ্রিম)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -85,7 +85,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/companies/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'companies') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-industry"></i>
-                <span class="nav-text">Companies (কোম্পানি)</span>
+                <span class="nav-text" title="Companies (কোম্পানি)">Companies (কোম্পানি)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -94,7 +94,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/products/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'products') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-cubes-stacked"></i>
-                <span class="nav-text">Cement Products</span>
+                <span class="nav-text" title="Cement Products (সিমেন্ট পণ্য)">Cement Products (সিমেন্ট পণ্য)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -103,7 +103,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/receives/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'receives') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-truck-ramp-box"></i>
-                <span class="nav-text">Cement Receive</span>
+                <span class="nav-text" title="Cement Receive (সিমেন্ট গ্রহণ)">Cement Receive (সিমেন্ট গ্রহণ)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -111,7 +111,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/stock/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'stock') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-boxes-stacked"></i>
-                <span class="nav-text">Stock Ledger</span>
+                <span class="nav-text" title="Stock Ledger (স্টক লেজার)">Stock Ledger (স্টক লেজার)</span>
             </a>
         </div>
 
@@ -122,7 +122,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/expenses/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'expenses') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-wallet"></i>
-                <span class="nav-text">Expenses (খরচ)</span>
+                <span class="nav-text" title="Expenses (খরচ)">Expenses (খরচ)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -132,7 +132,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/other_income/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'other_income') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-coins"></i>
-                <span class="nav-text">Other Income</span>
+                <span class="nav-text" title="Other Income (অন্যান্য আয়)">Other Income (অন্যান্য আয়)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -141,7 +141,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/company_payments/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'company_payments') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-building-columns"></i>
-                <span class="nav-text">Company Payment</span>
+                <span class="nav-text" title="Company Payment (কোম্পানি পেমেন্ট)">Company Payment (কোম্পানি পেমেন্ট)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -150,7 +150,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/targets/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'targets') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-bullseye"></i>
-                <span class="nav-text">Target & Commission</span>
+                <span class="nav-text" title="Target & Commission (টার্গেট ও কমিশন)">Target & Commission (টার্গেট ও কমিশন)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -159,7 +159,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/commission_periods/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'commission_periods') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-calendar-check"></i>
-                <span class="nav-text">Commission (3M/Yearly)</span>
+                <span class="nav-text" title="Commission (3M/Yearly) (কমিশন - ৩ মাস/বার্ষিক)">Commission (3M/Yearly) (কমিশন - ৩ মাস/বার্ষিক)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -173,49 +173,49 @@ $logoVer = getSetting('logo_updated_at', '0');
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/reports/daily.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_daily') ? 'active' : ''; ?>">
         <i class="fa-solid fa-calendar-day"></i>
-        <span class="nav-text">Daily Report</span>
+        <span class="nav-text" title="Daily Report (দৈনিক রিপোর্ট)">Daily Report (দৈনিক রিপোর্ট)</span>
     </a>
 </div>
 
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/reports/monthly.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_monthly') ? 'active' : ''; ?>">
         <i class="fa-solid fa-chart-line"></i>
-        <span class="nav-text">Monthly Report</span>
+        <span class="nav-text" title="Monthly Report (মাসিক রিপোর্ট)">Monthly Report (মাসিক রিপোর্ট)</span>
     </a>
 </div>
 
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/reports/yearly.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_yearly') ? 'active' : ''; ?>">
         <i class="fa-solid fa-calendar"></i>
-        <span class="nav-text">Yearly Report</span>
+        <span class="nav-text" title="Yearly Report (বার্ষিক রিপোর্ট)">Yearly Report (বার্ষিক রিপোর্ট)</span>
     </a>
 </div>
 
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/reports/company.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_company') ? 'active' : ''; ?>">
         <i class="fa-solid fa-building"></i>
-        <span class="nav-text">Company Report</span>
+        <span class="nav-text" title="Company Report (কোম্পানি রিপোর্ট)">Company Report (কোম্পানি রিপোর্ট)</span>
     </a>
 </div>
 
      <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/reports/stock.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_stock') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-boxes-stacked"></i>
-                <span class="nav-text">Stock Report</span>
+                <span class="nav-text" title="Stock Report (স্টক রিপোর্ট)">Stock Report (স্টক রিপোর্ট)</span>
             </a>
         </div>
 
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/reports/profit.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_profit') ? 'active' : ''; ?>">
         <i class="fa-solid fa-sack-dollar"></i>
-        <span class="nav-text">Profit & Loss</span>
+        <span class="nav-text" title="Profit & Loss (লাভ ও ক্ষতি)">Profit & Loss (লাভ ও ক্ষতি)</span>
     </a>
 </div>
 
 <div class="sidebar-nav-item">
     <a href="<?php echo BASE_URL; ?>/modules/retailers/due_report.php" class="sidebar-nav-link <?php echo ($activeMenu === 'report_retailer') ? 'active' : ''; ?>">
         <i class="fa-solid fa-file-invoice"></i>
-        <span class="nav-text">Retailer Due Report</span>
+        <span class="nav-text" title="Retailer Due Report (রিটেইলার বকেয়া রিপোর্ট)">Retailer Due Report (রিটেইলার বকেয়া রিপোর্ট)</span>
     </a>
 </div>
 
@@ -230,7 +230,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/monthly_closing/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'closing') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-lock"></i>
-                <span class="nav-text">Monthly Closing</span>
+                <span class="nav-text" title="Monthly Closing (মাসিক ক্লোজিং)">Monthly Closing (মাসিক ক্লোজিং)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -239,7 +239,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/users/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'users') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-user-shield"></i>
-                <span class="nav-text">User Management</span>
+                <span class="nav-text" title="User Management (ইউজার ম্যানেজমেন্ট)">User Management (ইউজার ম্যানেজমেন্ট)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -248,7 +248,7 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/settings/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'settings') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-sliders"></i>
-                <span class="nav-text">Business Settings</span>
+                <span class="nav-text" title="Business Settings (বিজনেস সেটিংস)">Business Settings (বিজনেস সেটিংস)</span>
             </a>
         </div>
         <?php endif; ?>
@@ -257,9 +257,21 @@ $logoVer = getSetting('logo_updated_at', '0');
         <div class="sidebar-nav-item">
             <a href="<?php echo BASE_URL; ?>/modules/audit/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'audit') ? 'active' : ''; ?>">
                 <i class="fa-solid fa-shield-halved"></i>
-                <span class="nav-text">Audit Logs</span>
+                <span class="nav-text" title="Audit Logs (অডিট লগ)">Audit Logs (অডিট লগ)</span>
             </a>
         </div>
         <?php endif; ?>
+
+        <?php if (hasPermission('backup.manage')): ?>
+        <div class="sidebar-nav-item">
+            <a href="<?php echo BASE_URL; ?>/modules/backup/index.php" class="sidebar-nav-link <?php echo ($activeMenu === 'backup') ? 'active' : ''; ?>">
+                <i class="fa-solid fa-cloud-arrow-down"></i>
+                <span class="nav-text" title="Database Backup (ব্যাকআপ)">Database Backup (ব্যাকআপ)</span>
+            </a>
+        </div>
+        <?php endif; ?>
+
+
+        
     </div>
 </aside>
