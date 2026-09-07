@@ -98,3 +98,11 @@ INSERT INTO `expense_categories` (`id`, `name`, `description`, `status`) VALUES
 (10, 'Miscellaneous / Other', 'General unexpected minor expenses', 'active');
 
 
+
+INSERT INTO permissions (slug, name) VALUES ('backup.manage', 'Manage Database Backup');
+-- Tarpor role_permissions e Super Admin (ba jei role dorkar) er sathe link korun:
+INSERT INTO role_permissions (role_id, permission_id)
+SELECT r.id, p.id FROM roles r, permissions p
+WHERE r.slug = 'super_admin' AND p.slug = 'backup.manage';
+
+
